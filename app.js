@@ -1,15 +1,14 @@
 const express = require("express");
-const Router = require("./router/index.js");
+const router = require("./router/index.js");
 require('dotenv').config();
 
 const app = express();
 
-const port = 3000;
+const port = 3004;
 
 app.use(express.json());
 
-
-app.use('/', Router);
+app.use('/', router);
 
 app.listen(port, () => {
     console.log(`Server Starting port ${port}`);

@@ -1,10 +1,21 @@
-const express = require('express');
-const router  = express.Router();
-const { get, add } = require("../controller/index");
-require('dotenv').config(); 
-
-router.get('/:test', get);
-router.post('/', add);
+const express = require("express");
+const pageRouter = express.Router();
+const userRoute = require("../models/Users");
+const brandRoute = require("../models/Brands");
 
 
-module.exports = router;
+pageRouter.use('/users',userRoute);
+pageRouter.use('/brands',brandRoute);
+
+pageRouter.use('/product', (req, res) => {
+    console.log('product istek geldi');
+    res.end();
+});
+
+pageRouter.use('/owner', (req, res) => {
+    console.log('owner istek geldi');
+    res.end();
+});
+
+
+module.exports = pageRouter;
