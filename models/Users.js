@@ -1,30 +1,33 @@
 const express = require("express");
 const modelRoute = express.Router();
-const mysql = require("mysql");
+const mysql = require("mysql2");
 
-var dbConnect = mysql.createConnection({
+const dbConnect = mysql.createConnection({
     host: "localhost",
     user: "root",
     password: "",
     database: "node_js_test"
   });
 
+  const table = 'user'
 
-modelRoute.get('/', (req, res) => {
-    dbConnect.connect();
-     dbConnect.query("SELECT * FROM user", function (err, result, fields) {
-        if (err) throw err;
-        let data = Object.values(JSON.parse(JSON.stringify(result)));
-        res.json(data);
+modelRoute.get('/', async (req, res) => {
+  const sql = `SELECT * FROM ${table}`
+    dbConnect.query(
+      sql,
+      function(err, results, fields) {
+        
+        res.status(200).json(results);
         res.end();
-      });
-      dbConnect.end();
+      }
+    );
 });
 
 modelRoute.post('/', (req, res) => {
     dbConnect.connect();
-    const {email} = req.body;
-    var sql = `INSERT INTO user (id, email) VALUES (NULL, '${email}')`;
+    const {email, password, firstName, lastName, address, state, city, country, date, phone} = req.body;
+    const sql = `INSERT INTO ${table} (user_id, user_email, user_password, user_firstName, user_lastName, user_role, user_address, user_state, user_city, user_country, user_registration_date, user_phone) 
+    VALUES (NULL, '${email}', '${password}', '${firstName}', '${lastName}', 0, '${address}', '${state}', '${city}', '${country}', '${date}', '${phone}')`;
      dbConnect.query(sql, function (err, result) {
         if (err) throw err;
         res.json({"message": "User Add"});
@@ -37,7 +40,7 @@ modelRoute.post('/:id', (req, res) => {
     dbConnect.connect();
     const {id} = req.params;
     const {email} = req.body;
-    var sql = `UPDATE user SET email = '${email}' WHERE id = '${id}'`;
+    const sql = `UPDATE ${table} SET email = '${email}' WHERE user_id = '${id}'`;
      dbConnect.query(sql, function (err, result) {
         if (err) throw err;
         res.json({"message": "User Update"});
@@ -46,10 +49,10 @@ modelRoute.post('/:id', (req, res) => {
       dbConnect.end();
 });
 
-modelRoute.get('/:id', (req, res) => {
+modelRoute.delete('/:id', (req, res) => {
     dbConnect.connect();
     const {id} = req.params;
-    var sql = `DELETE FROM user WHERE id = '${id}'`;
+    const sql = `DELETE FROM ${table} WHERE user_id = '${id}'`;
      dbConnect.query(sql, function (err, result) {
         if (err) throw err;
         res.json({"message": "User Delete"});
